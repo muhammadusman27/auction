@@ -2,11 +2,17 @@
     text-decoration: none;
 }
 
-.height_of_row {
-    height: 300px;
-    width: 300px;
-}
 
 .width_of_image{
-    width: 300px;
+    width: 400px;
+    height: auto;
+}
+
+.home_image{
+	height: 200px;
+	width: 250px;
+}
+
+.home_listing_border{
+	border: 1px solid black;
 }

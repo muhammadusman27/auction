@@ -48,15 +48,32 @@ class HomeController extends Controller
         #dd($bid_count);
         if ($bid_count != 0) {
             $bid_value = Bid::where('listing_id', $id)->orderBy('created_at', 'desc')->first();
-            $comments = Comment::where('listing_id', $id)->get();
+            $comments = Comment::where('listing_id', $id)->orderBy('created_at', 'desc')->get();
             #dd($bid_value->user_id);
             #dd($bid_value->getUserName($bid_value->user_id));
+            $listing = Listing::find($id);
+            if ($listing->is_active == false) {
+                #dd('listing is closed');
+                if (session('id') == $bid_value->user_id)
+                {
+                    #dd('congrats, you won the bid');
+                    return view('auction.specific', [
+                        'item' => $listing,
+                        'count' => $bid_count,
+                        'bid_value' => $bid_value->value,
+                        'bidPostedByUserName' => $bid_value->getUserName($bid_value->user_id),
+                        'comments' => $comments,
+                        'won' => true
+                    ]);
+                }
+            }
             return view('auction.specific', [
-                'item' => Listing::find($id),
+                'item' => $listing,
                 'count' => $bid_count,
                 'bid_value' => $bid_value->value,
                 'bidPostedByUserName' => $bid_value->getUserName($bid_value->user_id),
-                'comments' => $comments
+                'comments' => $comments,
+                'won' => false
             ]);
         }
         else {
@@ -67,12 +84,13 @@ class HomeController extends Controller
                 'count' => 0,
                 'bid_value' => $listing->starting_bid,
                 'bidPostedByUserName' => $listing->get_user_name($listing->user_id),
-                'comments' => $comments
+                'comments' => $comments,
+                'won' => false
             ]);
         }
     }
 
-    public function close_listing ($id) {
+    public function closeListing ($id) {
         $listing = Listing::find($id);
         $listing->is_active = false;
         $listing->save();
@@ -87,11 +105,18 @@ class HomeController extends Controller
         return redirect()->route('specific', $watch->listing_id);
     }
 
-    public function watch_delete(Request $request) {
+    public function watchDelete(Request $request) {
         $x = $request['listing_id'];
         $watchlist_listing = Watchlist::where('user_id', '=', session('id'))->where('listing_id', '=', (int)$request['listing_id'])->first();
         $watchlist_listing->delete();
         return redirect()->route('specific', (int)$request['listing_id']);
+    }
+
+    public function specificCategory($id) {
+        return view('auction.categoryspecific', [
+            'items' => Listing::where('category_id', $id)->get(),
+            'name' => Category::where('id', $id)->pluck('name')->first()
+        ]);
     }
 
 }

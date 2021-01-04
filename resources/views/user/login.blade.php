@@ -18,7 +18,7 @@
         <p>{{ session()->get('message') }}</p>
     @endif
 
-    <form method="post" action="{{ route('login_user') }}">
+    <form method="post" action="{{ route('loginUser') }}">
         @csrf
         <div class="form-group">
             <input type="email" name="email" value="{{ old('email') }}" class="form-control" placeholder="Email">

@@ -15,7 +15,7 @@
         </ul>
     @endif
 
-    <form method="POST" action="{{ route('register') }}">
+    <form method="POST" action="{{ route('registerUser') }}">
         @csrf
         <div class="form-group">
             <input type="text" name="name" value="{{ old('name') }}" class="form-control" placeholder="Name">

@@ -8,7 +8,7 @@ use App\Models\Bid;
 
 class BidController extends Controller
 {
-    public function add_bid(Request $request) {
+    public function addBid(Request $request) {
         #dd((int)$request['value']);
         #dd((int)$request['listing_id']);
         $check_bid = Bid::where('listing_id', (int)$request['listing_id'])->orderBy('created_at', 'desc')->first();

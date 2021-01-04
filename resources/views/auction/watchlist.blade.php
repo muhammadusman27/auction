@@ -9,15 +9,15 @@
     <h2>Watchlist</h2>
     <ul>
         @if ($items)
-            @foreach ($items as $item)
+            @forelse ($items as $item)
                 <li>
-                    <a href="{{ route('specific', $item->listing_id) }}">
+                    <a href="{{ route('specific', $item->listing_id) }}" class="navigation_links">
                         {{ $item->get_listing_title($item->id) }}
                     </a>
                 </li>
-            @endforeach
-        @else
-            <li>Watchlist is empty.</li>
+            @empty
+                <li>Watchlist is empty.</li>
+            @endforelse
         @endif
     </ul>
 

@@ -10,37 +10,52 @@ use App\Http\Controllers\CommentController;
 
 Route::redirect('/' , '/home');
 
-Route::match(['get', 'post'],'/register', [UserController::class, 'register'])->name('register');
-Route::match(['get', 'post'] ,'/login', [UserController::class, 'login'])->name('login_user');
-Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+Route::post('/register', [UserController::class, 'registerUser'])->name('registerUser');
+Route::get('/register', [UserController::class, 'registerPage'])->name('registerPage');
 
-# Categories route.
-Route::get('/home/categories',[HomeController::class, 'category'])->name('category')->middleware('login_check');
+Route::get('/login', [UserController::class, 'loginPage'])->name('loginPage');
+Route::post('/login', [UserController::class, 'loginUser'])->name('loginUser');
 
-# Watchlist route.
-Route::get('/home/watchlist', [WatchlistController::class, 'watchlist'])->name('watchlist')->middleware('login_check');;
 
-# Route to add/remove listing from Watchlist table.
-Route::post('/home/watch', [HomeController::class, 'watch'])->name('watch')->middleware('login_check');
-Route::post('/home/watch_remove', [HomeController::class, 'watch_delete'])->name('delete_from_watclist')->middleware('login_check');
+
+Route::middleware(['loginCheck'])->group( function () {
+
+	# Categories route.
+	Route::get('/home/categories',[HomeController::class, 'category'])->name('category');
+
+	# Watchlist route.
+	Route::get('/home/watchlist', [WatchlistController::class, 'watchlist'])->name('watchlist');;
+
+	# Route to add/remove listing from Watchlist table.
+	Route::post('/home/watch', [HomeController::class, 'watch'])->name('watch');
+	Route::post('/home/watchRemove', [HomeController::class, 'watchDelete'])->name('deleteFromWatclist');
+
+	Route::post('/home/create-Listing',[HomeController::class, 'storeListing'])->name('createNewListing');
+	Route::get('/home/create-listing', [HomeController::class, 'createListing'])->name('formListing');
+
+	# Rout to add bids
+	Route::post('/home/placeBid',[BidController::class, 'addBid'])->name('placeBid');
+
+	# Logout route
+	Route::get('/logout', [UserController::class, 'logout'])->name('logout');
+
+	Route::get('/home', [HomeController::class, 'home'])->name('home');
+
+	Route::post('/home/comment/{id}', [CommentController::class, 'addComment'])->name('comment');
+
+	# Specific category route
+	Route::get('/home/category/{id}', [HomeController::class, 'specificCategory'])->name('uniqueCategory');
+	# Close listing
+	Route::patch('/home/{id}', [HomeController::class, 'closeListing'])->name('listingClose');
+
+});
+
 
 #listing route without middleware.
 Route::get('/home', [HomeController::class, 'home'])->name('home');
 
-Route::post('/home/create-Listing',[HomeController::class, 'storeListing'])->name('createNewListing')->middleware('login_check');
-Route::get('/home/create-listing', [HomeController::class, 'createListing'])->name('formListing')->middleware('login_check');
-
-# Rout to add bids
-Route::post('/home/place_bid',[BidController::class, 'add_bid'])->name('place_bid')->middleware('login_check');
-
-Route::post('/home/comment/{id}', [CommentController::class, 'addComment'])->name('comment')->middleware('login_check');
-
-
 # Open specific listing without login and with login.
 Route::get('/home/{id}', [HomeController::class, 'item'])->name('specific');
 
-# Close listing
-Route::patch('/home/{id}', [HomeController::class, 'close_listing'])->name('listing_close')->middleware('login_check');
-# how to add middeleware on "/{id}" this route, so that the only access id's can be selected
 
-#Route::get('/welcome', [HomeController::class, 'welcome'])->middleware('login_check');5
+# how to add middeleware on "/{id}" this route, so that the only access id's can be selected

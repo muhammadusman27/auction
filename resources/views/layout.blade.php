@@ -19,8 +19,8 @@
             <div>
                 <a href="{{ route('home') }}" class="me-3 navigation_links">Active Listings</a>
                 @if(!session('id'))
-                    <a href="{{ route('login_user')}}" class="me-3 navigation_links">Log In</a>
-                    <a href="{{ route('register') }}" class="me-3 navigation_links">Register</a>
+                    <a href="{{ route('loginPage')}}" class="me-3 navigation_links">Log In</a>
+                    <a href="{{ route('registerPage') }}" class="me-3 navigation_links">Register</a>
                 @else
                     <a href="{{ route('category') }}" class="me-3 navigation_links">Categories</a>
                     <a href="{{ route('watchlist') }}" class="me-3 navigation_links">Watchlist</a>
