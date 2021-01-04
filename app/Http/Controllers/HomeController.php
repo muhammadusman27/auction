@@ -45,7 +45,6 @@ class HomeController extends Controller
 
     public function item($id) {
         $bid_count = Bid::where('listing_id', $id)->count();
-        #dd($bid_count);
         if ($bid_count != 0) {
             $bid_value = Bid::where('listing_id', $id)->orderBy('created_at', 'desc')->first();
             $comments = Comment::where('listing_id', $id)->orderBy('created_at', 'desc')->get();

@@ -10,6 +10,10 @@ use App\Http\Controllers\CommentController;
 
 Route::redirect('/' , '/home');
 
+
+# Make hash password of all password that exist in database.
+#Route::get('/usman', [UserController::class, 'makePasswordHash']);
+
 Route::post('/register', [UserController::class, 'registerUser'])->name('registerUser');
 Route::get('/register', [UserController::class, 'registerPage'])->name('registerPage');
 

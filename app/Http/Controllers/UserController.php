@@ -3,6 +3,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use DB;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+
+
 
 class UserController extends Controller
 {
@@ -13,7 +17,11 @@ class UserController extends Controller
             'email' => 'required|unique:users',
             'password' => 'required',
         ]);
-        $user = User::create($validated_data);
+        $user = new User();
+        $user->name = $request['name'];
+        $user->email = $request['email'];
+        $user->password = Hash::make($request['password']);
+        $user->save();
         session(['id' => $user->id, 'user_name' => $user->name ]);
         return redirect()->route('home');
     }
@@ -28,10 +36,10 @@ class UserController extends Controller
             'email' => 'required|email|exists:users',
             'password' => 'required',
         ]);
-        $email = $request['email'];
-        $password =$request['password'];
-        $user = DB::table('users')->where('email', $email)->first();
-        if ($user->password == $password) {
+        $credentials = $request->only('email', 'password');
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+            $user = User::where('email', $request['email'])->first();
             session(['id' => $user->id, 'user_name' => $user->name ]);
             return redirect()->route('home');
         }
@@ -40,6 +48,23 @@ class UserController extends Controller
             return redirect()->route('login_user')->with(['message' => 'Password is not valid.']);
         }
     }
+
+
+    // public function authenticate(Request $request)
+    // {
+    //     $validated_data = $request->validate([
+    //         // check it the user email already exists in user table under email column
+    //         'email' => 'required|email',
+    //         'password' => 'required',
+    //     ]);
+    //     $credentials = $request->only('email', 'password');
+    //     if (Auth::attempt($credentials)) {
+    //         $request->session()->regenerate();
+    //         return redirect()->route('home');
+    //     }
+    //     return redirect()->back()->with('myerror','The provided credentials are not valid.');
+    // }
+
 
     public function loginPage() {
         return view('user.login');
@@ -50,4 +75,15 @@ class UserController extends Controller
         $request->session()->flush();
         return redirect()->route('home');
     }
+
+    public function makePasswordHash() {
+        $users = User::all();
+        foreach ($users as $user) {
+            $user->password = Hash::make($user->password);
+            $user->save();
+        }
+        return 'all password are hashed';
+    }
+
+
 }
